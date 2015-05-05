@@ -1,5 +1,3 @@
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -10,7 +8,7 @@
 #include <sys/mman.h>
 #include <sys/time.h>
                             
-#define GPIO_ADD    0x3F200000L // physical address of I/O peripherals on the ARM processor
+#define GPIO_ADD    0x20200000L // physical address of I/O peripherals on the ARM processor
 #define GPIO_SEL1   1           // Offset of SEL register for GP17 & GP18 into GPIO bank   
 #define GPIO_SEL2   2           // Offset of SEL register for GP21 into GPIO bank  
 #define GPIO_SET    7           // Offset of PIN HIGH register into GPIO bank  
@@ -32,7 +30,7 @@
 #define DATE_READ    0x87
 #define MONTH_READ   0x89
 #define YEAR_READ    0x8D
-
+#define WR_ENABLE    0x8E
 
 int  mem_fd     = 0;
 char *gpio_mmap = NULL;
@@ -268,9 +266,15 @@ int main(int argc, char **argv)
          printf("Incorrect date and time specified.\nRun as:\nrtc-pi\nor\nrtc-pi CCYYMMDDHHMMSS\n");
          exit (-1);
       }
+      else
+      {
+         printf("Fecha y hora actualizados en el modulo RTC\n");
+      }
 
       /* Got valid input - now write it to the RTC */
       /* The RTC expects the values to be written in packed BCD format */
+      /* Mettre le bit write protect à 0 */
+      write_rtc(WR_ENABLE, 0); 
       write_rtc(SEC_WRITE, ( (second/10) << 4) | ( second % 10) );
       write_rtc(MIN_WRITE, ( (minute/10) << 4) | ( minute % 10) );
       write_rtc(HOUR_WRITE, ( (hour/10) << 4) | ( hour % 10) );
