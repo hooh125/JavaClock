@@ -19,6 +19,9 @@ import org.json.JSONException;
 
 public class Main {
 
+	private static final int		UPDATE_TIME = 0;
+	private static final int 		CHANGE_BACKLIGHT = 1;
+	private static final int 		POMODORO = 2;
 	private static final int 		SLEEP_TIME = 30*60*1000;
 	private static final int 		BAUD_RATE = 9600;
 	private static final String SERIAL_PORT = "/dev/ttyACM0";
@@ -44,11 +47,11 @@ public class Main {
 			try {
 				clock.updateTime(TIMEZONE);
 				weather.updateWeather(CITY, COUNTRY);
-				sendToArduino();
+				sendToArduino(UPDATE_TIME);
 				Thread.sleep(SLEEP_TIME);
 			} catch (InterruptedException|JSONException|IOException ex) {
 				error = true;
-				sendToArduino();
+				sendToArduino(UPDATE_TIME);
 				ex.printStackTrace();
 			}
 		}
@@ -83,11 +86,21 @@ public class Main {
 					if(event.getState() == PinState.LOW) {
 						String boton = "";
 						if(event.getPin().getPin() == RaspiPin.GPIO_00) {
-							boton = "buttonLeft";
+							boton = "Actualizando...";
+							try {
+								error = false;
+								clock.updateTime(TIMEZONE);
+								weather.updateWeather(CITY, COUNTRY);
+							} catch (IOException ex) {
+								error = true;
+							}
+							sendToArduino(UPDATE_TIME);
 						} else if(event.getPin().getPin() == RaspiPin.GPIO_01) {
-							boton = "buttonMiddle";
+							boton = "Iniciando/Parando pomodoro...";
+							sendToArduino(POMODORO);
 						} else if(event.getPin().getPin() == RaspiPin.GPIO_02) {
-							boton = "buttonRight";
+							boton = "Cambiando el estado del backlight...";
+							sendToArduino(CHANGE_BACKLIGHT);
 						}
 						System.out.println("Se ha pulsado: " + boton);
 					}
@@ -98,10 +111,10 @@ public class Main {
 		buttonRight.addListener(buttonListener);
 	}
 
-	private static void sendToArduino() {
+	private static void sendToArduino(int operation) {
 		if(serial.isOpen()) {
 			try {
-				String data = clock.getTime() + ":" + (error ? 1 : 0) + ":" + weather.getWeather() + ":" + weather.getLocalWeather() + "-";
+				String data = clock.getTime() + ":" + (error ? 1 : 0) + ":" + weather.getWeather() + ":" + weather.getLocalWeather() + ":"  + operation + "-";
 				System.out.println("Enviando -> " + data);
 				serial.write(data);
 			} catch (IllegalStateException ex) {

@@ -52,7 +52,7 @@ public class Weather {
 		String s = null;
 		while(data == null) {
 			intento++;
-			System.out.println("Intentando " + intento + " vez");
+			//System.out.println("Intentando " + intento + " vez");
 			try {
 			// run the Unix "ps -ef" command
 					// using the Runtime exec method:
