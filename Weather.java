@@ -21,7 +21,7 @@ public class Weather {
 
 	public Weather(String api_key) {
 		this.api_key = api_key;
-		df = new DecimalFormat("#.0");
+		df = new DecimalFormat("0.0");
 	}
 
 	public String getWeather() {
@@ -33,9 +33,12 @@ public class Weather {
 	}
 
 	public void updateWeather(String city, String country) throws JSONException, IOException {
-			JSONObject json = readJsonFromUrl("http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + country + "&appid=" + api_key);
+			String url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + country + "&appid=" + api_key;
+			//System.out.println("Actualizando el tiempo con esta URL -> " + url);
+			JSONObject json = readJsonFromUrl(url);
 			temp = json.getJSONObject("main").getDouble("temp") - 273.15;
 			humidity = json.getJSONObject("main").getInt("humidity");
+			System.out.println("Temp:" + temp + " Hum:" + humidity);
 			updateLocalWeather();
 	}
 

@@ -37,7 +37,7 @@ public class Clock {
 			min = calendar.get(Calendar.MINUTE);
 			sec = calendar.get(Calendar.SECOND);
 			day = calendar.get(Calendar.DAY_OF_MONTH);
-			month = calendar.get(Calendar.MONTH);
+			month = calendar.get(Calendar.MONTH) + 1;
 			year = calendar.get(Calendar.YEAR);
 			System.out.println("La hora se ha actualizado a " + hour + ":" + min + ":" + sec + ":" + day + ":" + month + ":" + year);
 		} else {

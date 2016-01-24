@@ -25,7 +25,7 @@ public class Main {
 	private static final int 		SLEEP_TIME = 30*60*1000;
 	private static final int 		BAUD_RATE = 9600;
 	private static final String SERIAL_PORT = "/dev/ttyACM0";
-	private static final String API_KEY = "bd82977b86bf27fb59a04b61b657fb6f";
+	private static final String API_KEY = "cd09d3ceae1378f89e6df28af53aedb9";
 	private static final String TIMEZONE = "GMT+1";
 	private static final String CITY = "Madrid";
 	private static final String COUNTRY = "es";
@@ -43,8 +43,9 @@ public class Main {
 		weather = new Weather(API_KEY);
 		//clock.start();
 		while(true) {
-			error = false;
+		error = false;
 			try {
+				System.out.println("Actualizando...");
 				clock.updateTime(TIMEZONE);
 				weather.updateWeather(CITY, COUNTRY);
 				sendToArduino(UPDATE_TIME);
@@ -52,7 +53,7 @@ public class Main {
 			} catch (InterruptedException|JSONException|IOException ex) {
 				error = true;
 				sendToArduino(UPDATE_TIME);
-				ex.printStackTrace();
+				//ex.printStackTrace();
 			}
 		}
 	}
@@ -114,10 +115,11 @@ public class Main {
 	private static void sendToArduino(int operation) {
 		if(serial.isOpen()) {
 			try {
-				String data = clock.getTime() + ":" + (error ? 1 : 0) + ":" + weather.getWeather() + ":" + weather.getLocalWeather() + ":"  + operation + "-";
+				String data = clock.getTime() + ":" + (error ? 1 : 0) + ":" + weather.getWeather() + ":" + weather.getLocalWeather() + ":"  + operation + "/";
 				System.out.println("Enviando -> " + data);
 				serial.write(data);
 			} catch (IllegalStateException ex) {
+				System.out.println(ex.toString());
 				ex.printStackTrace();
 			}
 		}
