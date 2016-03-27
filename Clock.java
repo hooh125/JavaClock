@@ -7,11 +7,14 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Timer;
+import java.util.TimerTask;
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
 
 public class Clock {
 
+	private static Clock instance = null;
 	private final int HOUR_LIMIT = 23;
 	private final int MIN_LIMIT = 59;
 	private final int SEC_LIMIT = 59;
@@ -22,8 +25,15 @@ public class Clock {
 	private int month = 0;
 	private int year = 0;
 
-	public Clock() {
+	protected Clock() {
 
+	}
+
+	public static Clock getInstance() {
+		if(instance == null) {
+			instance = new Clock();
+		}
+		return instance;
 	}
 
 	public String getTime() {
@@ -70,7 +80,15 @@ public class Clock {
 			}
 			client.close();
 			return null;
+		}
 
+		public void runChrono() {
+			new Timer().schedule(new TimerTask() {
+				@Override
+				public void run() {
+					System.out.println("PRUEBA DE CHRONO TERMINADA");
+				}
+		}, 5 * 1000);
 		}
 
 	}

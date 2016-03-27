@@ -11,17 +11,23 @@ import org.json.JSONObject;
 
 public class Weather {
 
+	private static Weather instance = null;
 	private static final String PYTHON_TEMP_FILENAME = "temperature.py";
-	private String api_key;
 	private Double temp = 0.;
 	private int humidity = 0;
 	private Double localTemp = 0.;
 	private int localHumidity = 0;
 	private DecimalFormat df;
 
-	public Weather(String api_key) {
-		this.api_key = api_key;
+	protected Weather() {
 		df = new DecimalFormat("0.0");
+	}
+
+	public static Weather getInstance() {
+		if(instance == null) {
+			instance = new Weather();
+		}
+		return instance;
 	}
 
 	public String getWeather() {
@@ -33,7 +39,7 @@ public class Weather {
 	}
 
 	public void updateWeather(String city, String country) throws JSONException, IOException {
-			String url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + country + "&appid=" + api_key;
+			String url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + country + "&appid=" + Main.API_KEY;
 			//System.out.println("Actualizando el tiempo con esta URL -> " + url);
 			JSONObject json = readJsonFromUrl(url);
 			temp = json.getJSONObject("main").getDouble("temp") - 273.15;
