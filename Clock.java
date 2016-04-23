@@ -1,5 +1,7 @@
 
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,6 +53,21 @@ public class Clock {
 			month = calendar.get(Calendar.MONTH) + 1;
 			year = calendar.get(Calendar.YEAR);
 			System.out.println("La hora se ha actualizado a " + hour + ":" + min + ":" + sec + ":" + day + ":" + month + ":" + year);
+			//Actualizamos la hora del módulo RTC
+			String line;
+			try {
+				String date = String.format("%1$04d%2$02d%3$02d%4$02d%5$02d%6$02d", year, month, day, hour, min, sec);
+				String command = "sudo ./rtc-pi " + date;
+				System.out.println("Ejecutando el comando: "  + command);
+				Process p = Runtime.getRuntime().exec(command);
+				BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				while ((line = in.readLine()) != null) {
+					System.out.println(line);
+				}
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
 			//Ha habido un error al actualizar la hora y fecha
 		}
@@ -91,12 +108,12 @@ public class Clock {
 					GPIO_Manager gpio_manager = GPIO_Manager.getInstance();
 					gpio_manager.beep();
 				}
-		}, 25 * 60 * 1000);
+			}, 25 * 60 * 1000);
 		}
 
 		public void stopChrono() {
 			if(timer != null)
-				timer.cancel();
+			timer.cancel();
 		}
 
 	}
