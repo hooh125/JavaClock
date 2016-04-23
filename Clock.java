@@ -15,6 +15,7 @@ import org.apache.commons.net.ntp.TimeInfo;
 public class Clock {
 
 	private static Clock instance = null;
+	private Timer timer;
 	private final int HOUR_LIMIT = 23;
 	private final int MIN_LIMIT = 59;
 	private final int SEC_LIMIT = 59;
@@ -83,12 +84,19 @@ public class Clock {
 		}
 
 		public void runChrono() {
-			new Timer().schedule(new TimerTask() {
+			timer = new Timer();
+			timer.schedule(new TimerTask() {
 				@Override
 				public void run() {
-					System.out.println("PRUEBA DE CHRONO TERMINADA");
+					GPIO_Manager gpio_manager = GPIO_Manager.getInstance();
+					gpio_manager.beep();
 				}
-		}, 5 * 1000);
+		}, 25 * 60 * 1000);
+		}
+
+		public void stopChrono() {
+			if(timer != null)
+				timer.cancel();
 		}
 
 	}

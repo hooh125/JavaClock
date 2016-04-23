@@ -10,6 +10,7 @@ import org.json.JSONException;
 
 public class Main {
 
+	public static final Double 	BEEP_DURATION = 0.5;
 	public static final int 	BAUD_RATE = 9600;
 	public static final int		UPDATE_TIME = 0;
 	public static final int		CHANGE_BACKLIGHT = 1;
@@ -43,7 +44,6 @@ public class Main {
 			} catch (InterruptedException|JSONException|IOException ex) {
 				gpio_manager.error = true;
 				serial_manager.sendToArduino(UPDATE_TIME, gpio_manager.error);
-				//ex.printStackTrace();
 			}
 		}
 	}
